@@ -20,24 +20,23 @@ func NewUserID() *ID {
 	return &ID{value: value}
 }
 
-func (u *ID) From(valueStr string) (*ID, error) {
+func IDFrom(valueStr string) (ID, error) {
 	if len(valueStr) == 0 {
-		return nil, ErrIllegalUserIDValue
+		return ID{}, ErrIllegalUserIDValue
 	}
 
 	value, err := uuid.Parse(valueStr)
 	if err != nil {
-		return nil, fmt.Errorf("valueStr isn't UUID format. Cause: %q", err.Error())
-
+		return ID{}, fmt.Errorf("valueStr isn't UUID format. Cause: %q", err.Error())
 	}
 
-	return &ID{value: value}, nil
+	return ID{value: value}, nil
 }
 
-func (u *ID) Value() uuid.UUID {
+func (u ID) Value() uuid.UUID {
 	return u.value
 }
 
-func (u *ID) String() string {
+func (u ID) String() string {
 	return u.value.String()
 }

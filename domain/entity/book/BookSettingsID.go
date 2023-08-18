@@ -20,7 +20,7 @@ func NewBookSettingsID() *SettingsID {
 	return &SettingsID{value: value}
 }
 
-func (u *SettingsID) From(valueStr string) (*SettingsID, error) {
+func SettingsIDFrom(valueStr string) (*SettingsID, error) {
 	if len(valueStr) == 0 {
 		return nil, ErrIllegalBookSettingsIDValue
 	}

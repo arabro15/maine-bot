@@ -11,14 +11,14 @@ var (
 	ErrIllegalNameValue = errors.New("illegal name value")
 )
 
-func NewName(value string) (*Name, error) {
+func NameFrom(value string) (Name, error) {
 	if len(value) == 0 {
-		return nil, ErrIllegalNameValue
+		return Name{}, ErrIllegalNameValue
 	}
 
-	return &Name{value: value}, nil
+	return Name{value: value}, nil
 }
 
-func (n *Name) Value() string {
+func (n Name) Value() string {
 	return n.value
 }

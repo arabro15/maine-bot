@@ -10,14 +10,14 @@ type Age struct {
 	value string
 }
 
-func NewAge(value string) (*Age, error) {
+func AgeFrom(value string) (Age, error) {
 	if len(value) == 0 {
-		return nil, ErrIllegalAgeValue
+		return Age{}, ErrIllegalAgeValue
 	}
 
-	return &Age{value: value}, nil
+	return Age{value: value}, nil
 }
 
-func (a *Age) Value() string {
+func (a Age) Value() string {
 	return a.value
 }

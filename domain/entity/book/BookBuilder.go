@@ -19,18 +19,7 @@ var (
 	ErrCheckRequiredFieldsBuilder = errors.New("check required fields in Builder is Error")
 )
 
-type Builder interface {
-	BookID(id ID) Builder
-	UserID(userID user.ID) Builder
-	Name(name entity.Name) Builder
-	FilePath(filePath string) Builder
-	TextFilePath(textFilePath string) Builder
-	BookSettings(bookSettings Settings) Builder
-	LoadedAt(loadedAt time.Time) Builder
-	build() (*Book, error)
-}
-
-type builder struct {
+type Builder struct {
 	bookID       ID
 	userID       user.ID
 	name         entity.Name
@@ -40,77 +29,81 @@ type builder struct {
 	loadedAt     time.Time
 }
 
-func (builder *builder) BookID(id ID) Builder {
-	builder.bookID = id
-	return builder
+func NewBuilder() *Builder {
+	return &Builder{}
 }
 
-func (builder *builder) UserID(userID user.ID) Builder {
-	builder.userID = userID
-	return builder
+func (b *Builder) BookID(id ID) *Builder {
+	b.bookID = id
+	return b
 }
 
-func (builder *builder) Name(name entity.Name) Builder {
-	builder.name = name
-	return builder
+func (b *Builder) UserID(userID user.ID) *Builder {
+	b.userID = userID
+	return b
 }
 
-func (builder *builder) FilePath(filePath string) Builder {
-	builder.filePath = filePath
-	return builder
+func (b *Builder) Name(name entity.Name) *Builder {
+	b.name = name
+	return b
 }
 
-func (builder *builder) TextFilePath(textFilePath string) Builder {
-	builder.textFilePath = textFilePath
-	return builder
+func (b *Builder) FilePath(filePath string) *Builder {
+	b.filePath = filePath
+	return b
 }
 
-func (builder *builder) BookSettings(bookSettings Settings) Builder {
-	builder.bookSettings = bookSettings
-	return builder
+func (b *Builder) TextFilePath(textFilePath string) *Builder {
+	b.textFilePath = textFilePath
+	return b
 }
 
-func (builder *builder) LoadedAt(loadedAt time.Time) Builder {
-	builder.loadedAt = loadedAt
-	return builder
+func (b *Builder) BookSettings(bookSettings Settings) *Builder {
+	b.bookSettings = bookSettings
+	return b
 }
 
-func (builder *builder) build() (*Book, error) {
-	var check = checkRequiredFieldsBuilder(builder)
+func (b *Builder) LoadedAt(loadedAt time.Time) *Builder {
+	b.loadedAt = loadedAt
+	return b
+}
+
+func (b *Builder) Build() (*Book, error) {
+	var check = checkRequiredFieldsBuilder(b)
 	if check != nil {
 		return nil, ErrCheckRequiredFieldsBuilder
 	}
 	return &Book{
-		bookID:       builder.bookID,
-		userID:       builder.userID,
-		name:         builder.name,
-		filePath:     builder.filePath,
-		textFilePath: builder.textFilePath,
-		bookSettings: builder.bookSettings,
-		loadedAt:     builder.loadedAt,
+		bookID:       b.bookID,
+		userID:       b.userID,
+		name:         b.name,
+		filePath:     b.filePath,
+		textFilePath: b.textFilePath,
+		bookSettings: b.bookSettings,
+		loadedAt:     b.loadedAt,
 	}, nil
 }
 
-func checkRequiredFieldsBuilder(builder *builder) error {
-	if len(builder.bookID.Value().String()) == 0 {
+func checkRequiredFieldsBuilder(b *Builder) error {
+	if len(b.bookID.Value().String()) == 0 {
 		return ErrEmptyBookIdBuilder
 	}
-	if len(builder.userID.Value().String()) == 0 {
+	if len(b.userID.Value().String()) == 0 {
 		return ErrEmptyBookUserIdBuilder
 	}
-	if len(builder.name.Value()) == 0 {
+	if len(b.name.Value()) == 0 {
 		return ErrEmptyBookNameBuilder
 	}
-	if len(builder.filePath) == 0 {
+	if len(b.filePath) == 0 {
 		return ErrEmptyFilePathBuilder
 	}
-	if len(builder.textFilePath) == 0 {
+	if len(b.textFilePath) == 0 {
 		return ErrEmptyTextFilePathBuilder
 	}
-	if len(builder.bookSettings.bookSettingsID.Value().String()) == 0 {
+	if len(b.bookSettings.bookSettingsID.Value().String()) == 0 {
 		return ErrEmptyBookSettingsBuilder
 	}
-	if builder.loadedAt.IsZero() {
+	if b.loadedAt.IsZero() {
 		return ErrIsZeroTimeLoadedAtBuilder
 	}
 

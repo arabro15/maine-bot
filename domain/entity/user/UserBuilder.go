@@ -3,7 +3,6 @@ package user
 import (
 	"errors"
 	"maineBot/domain/entity"
-	"maineBot/domain/entity/book"
 	"time"
 )
 
@@ -13,117 +12,105 @@ var (
 	ErrEmptyUserIdBuilder         = errors.New("empty UserID in Builder")
 	ErrEmptyNameBuilder           = errors.New("empty Name in Builder")
 	ErrEmptyTelegramNameBuilder   = errors.New("empty TelegramName in Builder")
-	ErrEmptyBookBuilder           = errors.New("empty Book in Builder")
 	ErrIsZeroTimeCreatedAtBuilder = errors.New("time CreatedAt is Zero in Builder")
 	ErrIsZeroTimeUpdatedAtBuilder = errors.New("time UpdatedAt is Zero in Builder")
 )
 
-type Builder interface {
-	UserID(id ID) Builder
-	Name(name entity.Name) Builder
-	TelegramName(telegramName string) Builder
-	Age(age Age) Builder
-	Gender(gender Gender) Builder
-	Book(book book.Book) Builder
-	CreatedAt(createdAt time.Time) Builder
-	UpdatedAt(UpdatedAt time.Time) Builder
-	UserStatus(status Status) Builder
-	build() (*User, error)
+type Errors []error
+
+func (e *Errors) Error() string {
+	return ""
 }
 
-type userBuilder struct {
+type Builder struct {
 	id           ID
 	name         entity.Name
 	telegramName string
 	age          Age
 	gender       Gender
-	book         book.Book
 	createdAt    time.Time
 	updatedAt    time.Time
 	status       Status
 }
 
-func (builder *userBuilder) UserID(id ID) Builder {
-	builder.id = id
-	return builder
+func NewBuilder() *Builder {
+	return &Builder{}
 }
 
-func (builder *userBuilder) Name(name entity.Name) Builder {
-	builder.name = name
-	return builder
+func (b *Builder) UserID(id ID) *Builder {
+	b.id = id
+	return b
 }
 
-func (builder *userBuilder) TelegramName(telegramName string) Builder {
-	builder.telegramName = telegramName
-	return builder
+func (b *Builder) Name(name entity.Name) *Builder {
+	b.name = name
+	return b
 }
 
-func (builder *userBuilder) Age(age Age) Builder {
-	builder.age = age
-	return builder
+func (b *Builder) TelegramName(telegramName string) *Builder {
+	b.telegramName = telegramName
+	return b
 }
 
-func (builder *userBuilder) Gender(gender Gender) Builder {
-	builder.gender = gender
-	return builder
+func (b *Builder) Age(age Age) *Builder {
+	b.age = age
+	return b
 }
 
-func (builder *userBuilder) Book(book book.Book) Builder {
-	builder.book = book
-	return builder
+func (b *Builder) Gender(gender Gender) *Builder {
+	b.gender = gender
+	return b
 }
 
-func (builder *userBuilder) CreatedAt(createdAt time.Time) Builder {
-	builder.createdAt = createdAt
-	return builder
+func (b *Builder) CreatedAt(createdAt time.Time) *Builder {
+	b.createdAt = createdAt
+	return b
 }
 
-func (builder *userBuilder) UpdatedAt(updatedAt time.Time) Builder {
-	builder.updatedAt = updatedAt
-	return builder
+func (b *Builder) UpdatedAt(updatedAt time.Time) *Builder {
+	b.updatedAt = updatedAt
+	return b
 }
 
-func (builder *userBuilder) UserStatus(status Status) Builder {
-	builder.status = status
-	return builder
+func (b *Builder) UserStatus(status Status) *Builder {
+	b.status = status
+	return b
 }
 
-func (builder *userBuilder) build() (*User, error) {
-	var check = checkRequiredFieldsBuilder(builder)
+func (b *Builder) Build() (User, error) {
+	var check = checkRequiredFieldsBuilder(b)
 	if check != nil {
-		return nil, ErrCheckRequiredFieldsBuilder
+		return User{}, ErrCheckRequiredFieldsBuilder
 	}
 
-	return &User{
-		id:           builder.id,
-		name:         builder.name,
-		telegramName: builder.telegramName,
-		age:          builder.age,
-		gender:       builder.gender,
-		book:         builder.book,
-		createdAt:    builder.createdAt,
-		updatedAt:    builder.updatedAt,
-		status:       builder.status,
+	return User{
+		id:           b.id,
+		name:         b.name,
+		telegramName: b.telegramName,
+		age:          b.age,
+		gender:       b.gender,
+		createdAt:    b.createdAt,
+		updatedAt:    b.updatedAt,
+		status:       b.status,
 	}, nil
 }
 
-func checkRequiredFieldsBuilder(builder *userBuilder) error {
-	if len(builder.id.Value().String()) == 0 {
-		return ErrEmptyUserIdBuilder
+func checkRequiredFieldsBuilder(b *Builder) error {
+	errs := Errors{}
+
+	if len(b.id.Value().String()) == 0 {
+		errs = append(errs, ErrEmptyUserIdBuilder)
 	}
-	if len(builder.name.Value()) == 0 {
+	if len(b.name.Value()) == 0 {
 		return ErrEmptyNameBuilder
 	}
-	if len(builder.telegramName) == 0 {
+	if len(b.telegramName) == 0 {
 		return ErrEmptyTelegramNameBuilder
 	}
-	if len(builder.book.BookID().Value().String()) == 0 {
-		return ErrEmptyBookBuilder
-	}
-	if builder.createdAt.IsZero() {
+	if b.createdAt.IsZero() {
 		return ErrIsZeroTimeCreatedAtBuilder
 	}
-	if builder.updatedAt.IsZero() {
+	if b.updatedAt.IsZero() {
 		return ErrIsZeroTimeUpdatedAtBuilder
 	}
 

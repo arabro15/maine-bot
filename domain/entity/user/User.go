@@ -3,7 +3,6 @@ package user
 import (
 	"errors"
 	"maineBot/domain/entity"
-	"maineBot/domain/entity/book"
 	"time"
 )
 
@@ -12,7 +11,6 @@ var (
 	ErrEmptyUserID         = errors.New("empty UserID")
 	ErrEmptyName           = errors.New("empty Name")
 	ErrEmptyTelegramName   = errors.New("empty TelegramName")
-	ErrEmptyBook           = errors.New("empty Book")
 	ErrCheckRequiredFields = errors.New("func CheckRequiredFields is error")
 )
 
@@ -22,7 +20,6 @@ type User struct {
 	telegramName string
 	age          Age
 	gender       Gender
-	book         book.Book
 	createdAt    time.Time
 	updatedAt    time.Time
 	status       Status
@@ -32,11 +29,10 @@ func (u User) NewUser(
 	id ID,
 	name entity.Name,
 	telegramName string,
-	book book.Book,
 	status Status,
 ) (*User, error) {
 
-	check := u.checkRequiredFields(&id, &name, &telegramName, &book)
+	check := u.checkRequiredFields(&id, &name, &telegramName)
 	if check != nil {
 		return nil, ErrCheckRequiredFields
 	}
@@ -45,7 +41,6 @@ func (u User) NewUser(
 		id:           id,
 		name:         name,
 		telegramName: telegramName,
-		book:         book,
 		status:       status,
 	}, nil
 }
@@ -70,10 +65,6 @@ func (u User) Gender() Gender {
 	return u.gender
 }
 
-func (u User) Book() book.Book {
-	return u.book
-}
-
 func (u User) CreatedAt() time.Time {
 	return u.createdAt
 }
@@ -90,7 +81,6 @@ func (u User) checkRequiredFields(
 	id *ID,
 	name *entity.Name,
 	telegramName *string,
-	book *book.Book,
 ) error {
 	if len(id.Value().String()) == 0 {
 		return ErrEmptyUserID
@@ -100,9 +90,6 @@ func (u User) checkRequiredFields(
 	}
 	if len(*telegramName) == 0 {
 		return ErrEmptyTelegramName
-	}
-	if len(book.BookID().Value().String()) == 0 {
-		return ErrEmptyBook
 	}
 
 	return nil

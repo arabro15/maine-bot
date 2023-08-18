@@ -20,7 +20,7 @@ func NewBookID() *ID {
 	return &ID{value: value}
 }
 
-func (b *ID) From(valueStr string) (*ID, error) {
+func IDFrom(valueStr string) (*ID, error) {
 	if len(valueStr) == 0 {
 		return nil, ErrIllegalBookIDValue
 	}
@@ -33,10 +33,10 @@ func (b *ID) From(valueStr string) (*ID, error) {
 	return &ID{value: value}, nil
 }
 
-func (b *ID) Value() uuid.UUID {
+func (b ID) Value() uuid.UUID {
 	return b.value
 }
 
-func (b *ID) String() string {
+func (b ID) String() string {
 	return b.value.String()
 }

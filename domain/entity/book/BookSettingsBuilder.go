@@ -14,16 +14,7 @@ var (
 	ErrIsZeroTimeUpdatedAtSettingsBuilder = errors.New("is zero time UpdatedAt in SettingsBuilder")
 )
 
-type SettingsBuilder interface {
-	SettingsID(id SettingsID) SettingsBuilder
-	BookID(id ID) SettingsBuilder
-	CurrentPage(currentPage int) SettingsBuilder
-	PageInDay(pageInDay int) SettingsBuilder
-	UpdateAt(updatedAt time.Time) SettingsBuilder
-	BookStatus(status Status) SettingsBuilder
-	build() (*Settings, error)
-}
-type settingsBuilder struct {
+type SettingsBuilder struct {
 	bookSettingsID SettingsID
 	bookID         ID
 	currentPage    int
@@ -32,62 +23,66 @@ type settingsBuilder struct {
 	bookStatus     Status
 }
 
-func (builder *settingsBuilder) SettingsID(id SettingsID) SettingsBuilder {
-	builder.bookSettingsID = id
-	return builder
+func NewSettingsBuilder() *SettingsBuilder {
+	return &SettingsBuilder{}
 }
 
-func (builder *settingsBuilder) BookID(id ID) SettingsBuilder {
-	builder.bookID = id
-	return builder
+func (sb *SettingsBuilder) SettingsID(id SettingsID) *SettingsBuilder {
+	sb.bookSettingsID = id
+	return sb
 }
 
-func (builder *settingsBuilder) CurrentPage(currentPage int) SettingsBuilder {
-	builder.currentPage = currentPage
-	return builder
+func (sb *SettingsBuilder) BookID(id ID) *SettingsBuilder {
+	sb.bookID = id
+	return sb
 }
 
-func (builder *settingsBuilder) PageInDay(pageInDay int) SettingsBuilder {
-	builder.pageInDay = pageInDay
-	return builder
+func (sb *SettingsBuilder) CurrentPage(currentPage int) *SettingsBuilder {
+	sb.currentPage = currentPage
+	return sb
 }
 
-func (builder *settingsBuilder) UpdateAt(updatedAt time.Time) SettingsBuilder {
-	builder.updatedAt = updatedAt
-	return builder
+func (sb *SettingsBuilder) PageInDay(pageInDay int) *SettingsBuilder {
+	sb.pageInDay = pageInDay
+	return sb
 }
 
-func (builder *settingsBuilder) BookStatus(status Status) SettingsBuilder {
-	builder.bookStatus = status
-	return builder
+func (sb *SettingsBuilder) UpdateAt(updatedAt time.Time) *SettingsBuilder {
+	sb.updatedAt = updatedAt
+	return sb
 }
 
-func (builder *settingsBuilder) build() (*Settings, error) {
-	var check = checkRequiredFieldsSettingsBuilder(builder)
+func (sb *SettingsBuilder) BookStatus(status Status) *SettingsBuilder {
+	sb.bookStatus = status
+	return sb
+}
+
+func (sb *SettingsBuilder) Build() (*Settings, error) {
+	var check = checkRequiredFieldsSettingsBuilder(sb)
 	if check != nil {
 		return nil, ErrCheckRequiredFieldsSettingsBuilder
 	}
 	return &Settings{
-		bookSettingsID: builder.bookSettingsID,
-		bookID:         builder.bookID,
-		currentPage:    builder.currentPage,
-		pageInDay:      builder.pageInDay,
-		updatedAt:      builder.updatedAt,
-		bookStatus:     builder.bookStatus,
+		bookSettingsID: sb.bookSettingsID,
+		bookID:         sb.bookID,
+		currentPage:    sb.currentPage,
+		pageInDay:      sb.pageInDay,
+		updatedAt:      sb.updatedAt,
+		bookStatus:     sb.bookStatus,
 	}, nil
 }
 
-func checkRequiredFieldsSettingsBuilder(builder *settingsBuilder) error {
-	if len(builder.bookSettingsID.Value().String()) == 0 {
+func checkRequiredFieldsSettingsBuilder(sb *SettingsBuilder) error {
+	if len(sb.bookSettingsID.Value().String()) == 0 {
 		return ErrEmptyBookSettingsIDSettingsBuilder
 	}
-	if len(builder.bookID.Value().String()) == 0 {
+	if len(sb.bookID.Value().String()) == 0 {
 		return ErrEmptyBookIDSettingsBuilder
 	}
-	if builder.pageInDay == 0 {
+	if sb.pageInDay == 0 {
 		return ErrEmptyPageInDaySettingsBuilder
 	}
-	if builder.updatedAt.IsZero() {
+	if sb.updatedAt.IsZero() {
 		return ErrIsZeroTimeUpdatedAtSettingsBuilder
 	}
 

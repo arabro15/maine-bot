@@ -1,0 +1,12 @@
+---
+
+is_debug: true
+listen:
+  type: port
+  port: 8091
+storage:
+  host: localhost
+  port: 5438
+  database: local_mainebot_db
+  username: local_pg_user
+  password: y0ONKIOdCaj2n23
